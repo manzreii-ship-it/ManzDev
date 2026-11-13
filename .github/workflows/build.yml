@@ -29,8 +29,7 @@ jobs:
           </resources>
           EOF
 
-          PKG_NAME=$(grep -oP 'namespace\s*=\s*"\K[^"]+' app/build.gradle.kts || echo "com.example.app")
-          cat << EOF > app/google-services.json
+          cat << 'EOF' > app/google-services.json
           {
             "project_info": {
               "project_number": "000000000000",
@@ -42,7 +41,7 @@ jobs:
                 "client_info": {
                   "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
                   "android_client_info": {
-                    "package_name": "$PKG_NAME"
+                    "package_name": "com.aistudio.manznime.qvrtwk"
                   }
                 },
                 "oauth_client": [],
