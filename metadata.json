@@ -1,0 +1,6 @@
+{
+  "name": "Manznime",
+  "description": "Anime discovery and in-app streaming app with genre filters, search, and synced episode watchlist.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

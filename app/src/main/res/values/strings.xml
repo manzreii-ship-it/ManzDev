@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Manznime</string>
+    <string name="auth_tagline">Stream Anime. Save Favorite Episodes.</string>
+    <string name="auth_subtitle">Discover thousands of anime series, filter by genre, watch right inside Manznime, and keep your watchlist &amp; watch history.</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="continue_as_guest">Continue as Guest</string>
+    <string name="guest_mode_hint">Mode Tamu: nonton &amp; simpan watchlist/history lokal tanpa login</string>
+    <string name="signing_in">Signing in…</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_watchlist">Watchlist</string>
+    <string name="nav_history">History</string>
+    <string name="nav_profile">Profile</string>
+    <string name="search_placeholder">Search anime titles, studios…</string>
+    <string name="filter_title">Filter &amp; Sort</string>
+    <string name="watchlist_empty_title">Your Episode Watchlist is Empty</string>
+    <string name="watchlist_empty_body">Tap the bookmark icon on any episode while browsing or watching to save it here for instant playback.</string>
+    <string name="history_empty_title">No Watch History Yet</string>
+    <string name="history_empty_body">Anime episodes you watch inside Manznime will appear here automatically so you can resume anytime.</string>
+    <string name="clear_history">Clear All</string>
+    <string name="explore_anime_cta">Explore Anime</string>
+    <string name="skip_intro">Skip Intro +85s</string>
+    <string name="next_episode">Next Episode</string>
+    <string name="prev_episode">Previous</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="exit_guest_mode">Exit Guest Mode</string>
+</resources>

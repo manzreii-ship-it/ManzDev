@@ -1,0 +1,131 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidWatchlistEpisode(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.animeId is int && data.animeId >= 1 &&
+             data.animeTitle is string && data.animeTitle.size() >= 1 && data.animeTitle.size() <= 200 &&
+             data.animeImageUrl is string && data.animeImageUrl.size() <= 600 &&
+             data.episodeNumber is int && data.episodeNumber >= 1 &&
+             data.episodeTitle is string && data.episodeTitle.size() >= 1 && data.episodeTitle.size() <= 200 &&
+             data.streamUrl is string && data.streamUrl.size() <= 800 &&
+             data.genres is list && data.genres.size() <= 10 &&
+             (data.genres.size() == 0 || data.genres[0] is string) &&
+             data.note is string && data.note.size() <= 300 &&
+             data.watchedSeconds is int && data.watchedSeconds >= 0 &&
+             data.durationSeconds is int && data.durationSeconds >= 0 &&
+             data.isFavorite is bool &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidWatchHistory(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.animeId is int && data.animeId >= 1 &&
+             data.animeTitle is string && data.animeTitle.size() >= 1 && data.animeTitle.size() <= 200 &&
+             data.animeImageUrl is string && data.animeImageUrl.size() <= 600 &&
+             data.lastEpisodeNumber is int && data.lastEpisodeNumber >= 1 &&
+             data.lastEpisodeTitle is string && data.lastEpisodeTitle.size() >= 1 && data.lastEpisodeTitle.size() <= 200 &&
+             data.positionMs is int && data.positionMs >= 0 &&
+             data.durationMs is int && data.durationMs >= 0 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    match /users/{userId}/watchlist_episodes/{entryId} {
+      allow get: if isOwner(userId) && isValidId(entryId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(entryId) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().keys().hasAll([
+                         'userId', 'animeId', 'animeTitle', 'animeImageUrl',
+                         'episodeNumber', 'episodeTitle', 'streamUrl', 'genres',
+                         'note', 'watchedSeconds', 'durationSeconds', 'isFavorite',
+                         'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'animeId', 'animeTitle', 'animeImageUrl',
+                         'episodeNumber', 'episodeTitle', 'streamUrl', 'genres',
+                         'note', 'watchedSeconds', 'durationSeconds', 'isFavorite',
+                         'createdAt', 'updatedAt'
+                       ]) &&
+                       isValidWatchlistEpisode(incoming());
+
+      allow update: if isOwner(userId) &&
+                       isValidId(entryId) &&
+                       isValidWatchlistEpisode(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().animeId == existing().animeId &&
+                       incoming().episodeNumber == existing().episodeNumber &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'animeTitle', 'animeImageUrl', 'episodeTitle', 'streamUrl',
+                         'genres', 'note', 'watchedSeconds', 'durationSeconds',
+                         'isFavorite', 'updatedAt'
+                       ]);
+
+      allow delete: if isOwner(userId) && isValidId(entryId);
+    }
+
+    match /users/{userId}/watch_history/{historyId} {
+      allow get: if isOwner(userId) && isValidId(historyId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(historyId) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().keys().hasAll([
+                         'userId', 'animeId', 'animeTitle', 'animeImageUrl',
+                         'lastEpisodeNumber', 'lastEpisodeTitle', 'positionMs',
+                         'durationMs', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'animeId', 'animeTitle', 'animeImageUrl',
+                         'lastEpisodeNumber', 'lastEpisodeTitle', 'positionMs',
+                         'durationMs', 'createdAt', 'updatedAt'
+                       ]) &&
+                       isValidWatchHistory(incoming());
+
+      allow update: if isOwner(userId) &&
+                       isValidId(historyId) &&
+                       isValidWatchHistory(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().animeId == existing().animeId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'animeTitle', 'animeImageUrl', 'lastEpisodeNumber',
+                         'lastEpisodeTitle', 'positionMs', 'durationMs', 'updatedAt'
+                       ]);
+
+      allow delete: if isOwner(userId) && isValidId(historyId);
+    }
+  }
+}

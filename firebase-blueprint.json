@@ -1,0 +1,156 @@
+{
+  "entities": {
+    "WatchlistEpisode": {
+      "title": "WatchlistEpisode",
+      "description": "A user's saved favorite anime episode with optional watch progress and note.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase Auth UID."
+        },
+        "animeId": {
+          "type": "integer",
+          "description": "MyAnimeList/Jikan anime identifier."
+        },
+        "animeTitle": {
+          "type": "string",
+          "description": "Display title of the anime series or movie."
+        },
+        "animeImageUrl": {
+          "type": "string",
+          "description": "Poster image URL for the anime."
+        },
+        "episodeNumber": {
+          "type": "integer",
+          "description": "Episode number (1-indexed)."
+        },
+        "episodeTitle": {
+          "type": "string",
+          "description": "Display title of the episode."
+        },
+        "streamUrl": {
+          "type": "string",
+          "description": "Cached playable video stream URL if resolved."
+        },
+        "genres": {
+          "type": "array",
+          "description": "Up to 10 genre tags associated with the anime."
+        },
+        "note": {
+          "type": "string",
+          "description": "Optional user note for the saved episode."
+        },
+        "watchedSeconds": {
+          "type": "integer",
+          "description": "Last watched position in seconds."
+        },
+        "durationSeconds": {
+          "type": "integer",
+          "description": "Total episode duration in seconds."
+        },
+        "isFavorite": {
+          "type": "boolean",
+          "description": "Whether the episode is starred as a favorite."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": [
+        "userId",
+        "animeId",
+        "animeTitle",
+        "animeImageUrl",
+        "episodeNumber",
+        "episodeTitle",
+        "streamUrl",
+        "genres",
+        "note",
+        "watchedSeconds",
+        "durationSeconds",
+        "isFavorite",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "WatchHistoryEntry": {
+      "title": "WatchHistoryEntry",
+      "description": "Tracks the latest watched episode and playback position for an anime series.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase Auth UID."
+        },
+        "animeId": {
+          "type": "integer",
+          "description": "MyAnimeList/Jikan anime identifier."
+        },
+        "animeTitle": {
+          "type": "string",
+          "description": "Display title of the anime."
+        },
+        "animeImageUrl": {
+          "type": "string",
+          "description": "Poster image URL for the anime."
+        },
+        "lastEpisodeNumber": {
+          "type": "integer",
+          "description": "Most recently watched episode number."
+        },
+        "lastEpisodeTitle": {
+          "type": "string",
+          "description": "Most recently watched episode title."
+        },
+        "positionMs": {
+          "type": "integer",
+          "description": "Saved playback position in milliseconds."
+        },
+        "durationMs": {
+          "type": "integer",
+          "description": "Total stream duration in milliseconds."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": [
+        "userId",
+        "animeId",
+        "animeTitle",
+        "animeImageUrl",
+        "lastEpisodeNumber",
+        "lastEpisodeTitle",
+        "positionMs",
+        "durationMs",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/watchlist_episodes/{entryId}": {
+      "schema": { "$ref": "#/entities/WatchlistEpisode" },
+      "description": "Per-user favorite episodes watchlist subcollection."
+    },
+    "/users/{userId}/watch_history/{historyId}": {
+      "schema": { "$ref": "#/entities/WatchHistoryEntry" },
+      "description": "Per-user continue watching progress subcollection."
+    }
+  }
+}
