@@ -17,6 +17,51 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Generate Dummy Keystore & Google Services
+        run: |
+          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          
+          mkdir -p app/src/main/res/values
+          cat << 'EOF' > app/src/main/res/values/google_auth.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="default_web_client_id" translatable="false">000000000000-dummyclientid.apps.googleusercontent.com</string>
+          </resources>
+          EOF
+
+          PKG_NAME=$(grep -oP 'namespace\s*=\s*"\K[^"]+' app/build.gradle.kts || echo "com.example.app")
+          cat << EOF > app/google-services.json
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "manznime-dummy",
+              "storage_bucket": "manznime-dummy.appspot.com"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                  "android_client_info": {
+                    "package_name": "$PKG_NAME"
+                  }
+                },
+                "oauth_client": [],
+                "api_key": [
+                  {
+                    "current_key": "AIzaSyDummyKeyForBuildOnly000000000"
+                  }
+                ],
+                "services": {
+                  "appinvite_service": {
+                    "other_platform_oauth_client": []
+                  }
+                }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          EOF
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
